@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+	<title>Welcome to My Quiz App</title>
+	<style>
+		.container {
+			margin-top: 100px;
+			text-align: center;
+		}
+
+		h1 {
+			font-size: 48px;
+			margin-bottom: 50px;
+		}
+
+		button {
+			font-size: 24px;
+			padding: 10px 20px;
+			border-radius: 5px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		button:hover {
+			background-color: #3e8e41;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Welcome to My Quiz App</h1>
+	
+		<script src="{% static 'js/timer.js' %}"></script>
+<a href='{% url 'question' %}' class="btn btn-primary" id="start">Start Quiz</a>
+	</div>
+	<script>
+		function startTimer() {
+		  // Set the initial timer values
+		  let minutes = 0;
+		  let seconds = 0;
+		
+		  // Update the timer display and the input field
+		  const timer = document.getElementById('displaytimer');
+		  const inputtag = document.getElementById('timer');
+		  timer.innerHTML = "<b>Timer: " + minutes + " minutes " + seconds + " seconds</b>";
+		  inputtag.value = minutes;
+		
+		  // Update the timer every second
+		  let intervalID = setInterval(() => {
+			seconds += 1;
+			if (seconds == 60) {
+			  minutes += 1;
+			  seconds = 0;
+			}
+		
+			// Update the timer display and the input field
+			timer.innerHTML = "<b>Timer: " + minutes + " minutes " + seconds + " seconds</b>";
+			inputtag.value = minutes;
+		
+			// Store the timer value in the local storage
+			localStorage.setItem('timer', minutes + ':' + seconds);
+		  }, 1000);
+		
+		  // Save the timer value in the local storage before leaving the page
+		  window.onunload = () => {
+			localStorage.setItem('timer', minutes + ':' + seconds);
+		  };
+		}
+		</script>
+		
+</body>
+</html>

@@ -1,0 +1,110 @@
+
+{% load static %}
+{% block content %}
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</head>
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+<div class="container ">
+<h1>Welcome to  Quiz</h1><br>
+
+<div align="right" style="margin-top:-2em; font-size:2em;" id="displaytimer"><b style="color: rgb(95, 66, 173); ">Timer: 0 seconds</b></div>
+
+ <form method='post' action='{% url 'result'%}'>
+    {% csrf_token %}
+   {% for q in page_obj %} 
+    <div class="form-group">
+    
+    <label for="question">Question {{ forloop.counter }}: {{ q.question }}</label>
+    </div>
+    <div class="form-check">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios1" value="A" checked>
+            <label class="form-check-label" for="gridRadios1">
+                {{q.a}}
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios2" value="B">
+            <label class="form-check-label" for="gridRadios2">
+                {{q.b}}
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios1" value="C">
+            <label class="form-check-label" for="gridRadios1">
+                {{q.c}}
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{q.question}}" id="gridRadios2" value="D">
+            <label class="form-check-label" for="gridRadios2">
+                {{q.d}}
+            </label>
+        </div>
+        <br>
+    </div>    
+    {% endfor %}
+    <input id='timer' type='hidden' name="timer" value="">
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  
+
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1">&laquo;</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+          </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+  
+
+    {% block script %}
+        <script>
+
+            // Update the timer display and the input field
+const timer = document.getElementById('displaytimer');
+const inputtag = document.getElementById('timer');
+setInterval(() => {
+  let now = new Date();
+  let hours = now.getHours();
+  let minutes = now.getMinutes();
+  let seconds = now.getSeconds();
+  timer.innerHTML = "<b>Timer: " + hours + ":" + minutes + ":" + seconds + "</b>";
+  inputtag.value = hours * 60 + minutes; // Convert hours and minutes to minutes for the input field
+}, 1000);
+
+        </script>
+    {% endblock script %}
+
+</div>
+{% endblock %}
